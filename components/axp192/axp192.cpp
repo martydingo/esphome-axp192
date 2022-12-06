@@ -65,8 +65,6 @@ void AXP192Component::SetLCDRSet(bool state) {
 
 void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC, bool disableDCDC1, bool disableDCDC3)
 {  
-    // For reference, look at Arduino code for M5Core2
-    // https://github.com/m5stack/M5Core2/blob/master/src/AXP192.cpp
   switch (this->model_) {
     case AXP192_M5STICKC:
     {
@@ -75,6 +73,9 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
     }
     case AXP192_M5CORE2:
     {
+        // For the boot sequence reference, look at Arduino code for M5Core2
+        // https://github.com/m5stack/M5Core2/blob/master/src/AXP192.cpp
+
         // Set DCDC3 (TFT_LED & TFT) 3.0V
         Write1Byte(0x27, 0xcc);	
         // Set LDO2 & LDO3(TFT_LED & TFT) 3.0V
@@ -92,9 +93,9 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
 
         // Toggle to reset LCD
         SetLCDRSet(0);
-        //delay(100);
+        delay(100);
         SetLCDRSet(1);
-        //delay(100);        
+        delay(100);        
     }
   }
 
