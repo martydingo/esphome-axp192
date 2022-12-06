@@ -40,11 +40,18 @@ public:
   float get_setup_priority() const override;
   void update() override;
 
+    static const uint8_t ADDR_GPIO1_CFG = 0x92;
+    static const uint8_t ADDR_GPIO2_CFG = 0x93;
+    static const uint8_t ADDR_GPIO4_CFG = 0x95;
+    static const uint8_t ADDR_GPIO      = 0x96;
+
 protected:
     sensor::Sensor *batterylevel_sensor_;
     float brightness_{1.0f};
     float curr_brightness_{-1.0f};
     AXP192Model model_;
+
+
 
     /** M5 Stick Values
      * LDO2: Display backlight
@@ -107,7 +114,8 @@ protected:
     void SetLDO2( bool State );
     void SetLDO3( bool State );
     void SetAdcState(bool State);
-    
+    void SetLCDRSet(bool state);
+
     void PowerOff();
 
     

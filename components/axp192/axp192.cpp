@@ -1,5 +1,6 @@
 #include "axp192.h"
 #include "esphome/core/log.h"
+#include "esphome/core/hal.h"
 #include "esp_sleep.h"
 
 namespace esphome {
@@ -48,8 +49,24 @@ void AXP192Component::update() {
 }
 
 
+void AXP192Component::SetLCDRSet(bool state) {
+  uint8_t gpio_bit = 0x02;
+  uint8_t data;
+  data = Read8bit(AXP192Component::ADDR_GPIO);
+
+  if (state) {
+    data |= gpio_bit;
+  } else {
+    data &= ~gpio_bit;
+  }
+
+  Write1Byte(AXP192Component::ADDR_GPIO, data);
+}
+
 void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC, bool disableDCDC1, bool disableDCDC3)
 {  
+    // For reference, look at Arduino code for M5Core2
+    // https://github.com/m5stack/M5Core2/blob/master/src/AXP192.cpp
   switch (this->model_) {
     case AXP192_M5STICKC:
     {
@@ -62,6 +79,22 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
         Write1Byte(0x27, 0xcc);	
         // Set LDO2 & LDO3(TFT_LED & TFT) 3.0V
         Write1Byte(0x28, 0xcc);	
+
+        // Not sure of the meaning of the various hex bitfields
+        // Enable GPIO1 - SYS_LED
+        Write1Byte(AXP192Component::ADDR_GPIO1_CFG, Read8bit(AXP192Component::ADDR_GPIO1_CFG) & 0xf8);
+
+        // Enable GPIO2 - SPK_EN
+        Write1Byte(AXP192Component::ADDR_GPIO2_CFG, Read8bit(AXP192Component::ADDR_GPIO2_CFG) & 0xf8);
+
+        // Enable GPIO4 - LCD display reset
+        Write1Byte(AXP192Component::ADDR_GPIO4_CFG, (Read8bit(AXP192Component::ADDR_GPIO4_CFG) & 0x72) | 0X84);
+
+        // Toggle to reset LCD
+        SetLCDRSet(0);
+        //delay(100);
+        SetLCDRSet(1);
+        //delay(100);        
     }
   }
 
@@ -105,6 +138,10 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
     
     // Enable bat detection
     Write1Byte(0x32, 0x46);
+
+    // Reset the display by pulling GPIO4 low
+    // Delay for 10ms
+    // Clear the reset by setting GPIO4 high
 }
 
 void AXP192Component::Write1Byte( uint8_t Addr ,  uint8_t Data )
