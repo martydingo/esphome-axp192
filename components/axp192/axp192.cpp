@@ -61,6 +61,10 @@ void AXP192Component::update() {
     UpdateBrightness();
 }
 
+void AXP192Component::disable_ldo3()
+{
+    this->SetLDO3(false);
+}
 
 void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC, bool disableDCDC1, bool disableDCDC3)
 {  
