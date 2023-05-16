@@ -40,7 +40,7 @@ public:
   void dump_config() override;
   float get_setup_priority() const override;
   void update() override;
-  void disable_ldo3() { this->SetLDO3(false); };
+  void disable_ldo3();
 
 private:
     static std::string GetStartupReason();
