@@ -61,6 +61,13 @@ void AXP192Component::update() {
       this->batterylevel_sensor_->publish_state(batterylevel);
     }
 
+    if (this->charging_sensor_ != nullptr) {
+        bool battery_state = GetBatState();
+      bool charging = GetChargingState();
+      ESP_LOGD(TAG, "Got Charging=%d state=%d", charging, battery_state);
+      this->charging_sensor_->publish_state(charging);
+    }
+
     UpdateBrightness();
 }
 
@@ -252,6 +259,15 @@ void AXP192Component::UpdateBrightness()
 bool AXP192Component::GetBatState()
 {
     if( Read8bit(0x01) | 0x20 )
+        return true;
+    else
+        return false;
+}
+
+bool AXP192Component::GetChargingState()
+{
+    // reading 0x00 bit 6
+    if( (Read8bit(0x00) >> 5) & 0x01 )
         return true;
     else
         return false;
