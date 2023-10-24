@@ -232,6 +232,11 @@ void AXP192Component::UpdateBrightness()
       {
         uint8_t buf = Read8bit( 0x28 );
         Write1Byte( 0x28 , ((buf & 0x0f) | (ubri << 4)) );
+        if (brightness_ == 0) {
+            SetLDO2(false);
+        } else {
+            SetLDO2(true);
+        }
         break;
       }
       case AXP192_M5CORE2:
