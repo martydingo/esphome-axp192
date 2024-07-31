@@ -89,18 +89,13 @@ output:
     inverted: true
     id: builtin_led
 
-#############################################
-### Currently causes an error with compilation
-##
 # internal IR Transmitter 
-# remote_transmitter:
-#   - pin:
-#       number: GPIO9
-#     carrier_duty_percent: 50%
-#     id: internal
-##
-###
-#############################################
+remote_transmitter:
+  - pin:
+      number: GPIO9
+    carrier_duty_percent: 50%
+    id: internal_ir
+
 spi:
   clk_pin: GPIO13
   mosi_pin: GPIO15
